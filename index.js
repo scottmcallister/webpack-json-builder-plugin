@@ -7,6 +7,7 @@ function JsonBundlerPlugin(options) {
     this.omit = this.opts.omit || '';
     this.fileInput = this.opts.fileInput || '';
     this.rootDirectory = this.opts.rootDirectory || '';
+    this.localeDirectory = this.opts.localeDirectory || '';
 
     // concatenate all JSON files for translations
     this.gatherJson = function(compilation) {
@@ -32,12 +33,12 @@ JsonBundlerPlugin.prototype.apply = function(compiler) {
       compiler.plugin("emit", function(compilation, callback) {
         var fullJSON = this.gatherJson(compilation);
 
-        // write each translation locale content in a separate file 
+        // write each translation locale content in a separate file
         Object
             .keys(fullJSON)
             .map(fileName => {
                 var values = deepAssign({}, fullJSON[fileName]);
-                compilation.assets['locales/' + fileName] = {
+                compilation.assets[localeDirectory + fileName] = {
                     source: function() {
                         return new Buffer(JSON.stringify(values));
                     },

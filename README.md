@@ -69,22 +69,19 @@ You can pass the following options as parameters.
 * `omit` - a regular expression describing which directories to omit from the locale path in the bundled JSON
 
 Example: 
-```javascript
    dir1/dir2/components/dir3
    if 'omit' = /\/?components/g
    the resulting locale path in your bundled JSON will be dir1/dir2/dir3
-```
 
 * `fileInput` - a string that is used to identify all locale files that you wish to include in your bundled JSON.
 
 * `localeDirectory` - the directory in which you want webpack to put the newly created locale files. 
 
 Example: 
-```javascript
    if localeDirectory: 'locales/'
    You will find your locale files in the locale folder within the directory where your webpack bundle is being output
    ex. 'dist/locales/fr-FR.json ...
-```
+
 
 * `rootDirectory` - the uppermost directory within your project where all locale files can be found. In the example project structure
 above, this would be 'src'.

@@ -20,8 +20,13 @@ function JsonBundlerPlugin(options) {
             var localePath = relative.replace(this.omit, '').replace(filename, '');
             localePath = localePath.replace(/^\/|\/$/g, '').replace(/\//g, '.');
             var content = {};
-            var data = fs.readFileSync(filepath, 'utf8');
-            objectPath.set(content, localePath, JSON.parse(data));
+            var data = JSON.parse(fs.readFileSync(filepath, 'utf8'));
+
+            if(localePath) {
+                objectPath.set(content, localePath, data);
+            } else {
+                content = data;
+            }
             contents[filename] = contents[filename] || {};
             deepAssign(contents[filename], content);
         }.bind(this));
@@ -38,7 +43,7 @@ JsonBundlerPlugin.prototype.apply = function(compiler) {
             .keys(fullJSON)
             .map(fileName => {
                 var values = deepAssign({}, fullJSON[fileName]);
-                compilation.assets[localeDirectory + fileName] = {
+                compilation.assets[this.localeDirectory + fileName] = {
                     source: function() {
                         return new Buffer(JSON.stringify(values));
                     },

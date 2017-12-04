@@ -1,6 +1,6 @@
 {
   "name": "webpack-json-bundler-plugin",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A webpack plugin to bundle json files together",
   "main": "index.js",
   "scripts": {

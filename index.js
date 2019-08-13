@@ -14,7 +14,11 @@ function JsonBundlerPlugin(options) {
         var contents = {};
         fs.recurseSync(this.rootDirectory, [this.fileInput], function(filepath, relative, filename) {
             // watch file for hot reloading
-            compilation.fileDependencies.push(filepath);
+            if (Array.isArray(compilation.fileDependencies)) {
+                compilation.fileDependencies.push(filepath);
+            } else {
+                compilation.fileDependencies.add(filepath);
+            }
 
             // read path and modify for creating JSON
             var localePath = relative.replace(this.omit, '').replace(filename, '');

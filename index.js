@@ -14,7 +14,11 @@ function JsonBundlerPlugin(options) {
         var contents = {};
         fs.recurseSync(this.rootDirectory, [this.fileInput], function(filepath, relative, filename) {
             // watch file for hot reloading
-            compilation.fileDependencies.push(filepath);
+            if (Array.isArray(compilation.fileDependencies)) {
+                compilation.fileDependencies.push(filepath);
+            } else {
+                compilation.fileDependencies.add(filepath);
+            }
 
             // read path and modify for creating JSON
             var localePath = relative.replace(this.omit, '').replace(filename, '');
@@ -35,25 +39,25 @@ function JsonBundlerPlugin(options) {
 }
 
 JsonBundlerPlugin.prototype.apply = function(compiler) {
-      compiler.plugin("emit", function(compilation, callback) {
-        var fullJSON = this.gatherJson(compilation);
+    compiler.hooks.emit.tapAsync("JsonBundlerPlugin", function(compilation, callback) {
+      var fullJSON = this.gatherJson(compilation);
 
-        // write each translation locale content in a separate file
-        Object
-            .keys(fullJSON)
-            .map(fileName => {
-                var values = deepAssign({}, fullJSON[fileName]);
-                compilation.assets[this.localeDirectory + fileName] = {
-                    source: function() {
-                        return new Buffer(JSON.stringify(values));
-                    },
-                    size: function() {
-                        return Buffer.byteLength(JSON.stringify(values));
-                    }
-                };
-            });
-        callback();
-      }.bind(this));
+      // write each translation locale content in a separate file
+      Object
+          .keys(fullJSON)
+          .map(fileName => {
+              var values = deepAssign({}, fullJSON[fileName]);
+              compilation.assets[this.localeDirectory + fileName] = {
+                  source: function() {
+                      return new Buffer(JSON.stringify(values));
+                  },
+                  size: function() {
+                      return Buffer.byteLength(JSON.stringify(values));
+                  }
+              };
+          });
+      callback();
+    }.bind(this));
 };
 
 module.exports = JsonBundlerPlugin;
